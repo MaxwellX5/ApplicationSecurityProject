@@ -1,0 +1,68 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+    <h2>Product Form</h2>
+    <div class="row">
+        <div class="col-8">
+            <form method="POST" action="/productform"  enctype="multipart/form-data">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+
+                <div class="form-group">
+                    <label for="product_name">Product Name:</label>
+                    <input type="text" id="product_name" name="product_name" class="form-control" required><br>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="product_price">Product Price:</label>
+                    <input type="number" id="product_price" name="product_price" class="form-control" required><br>
+
+                </div>
+                <div class="input-group has-validation">
+                    <!-- file upload button, tell browser to only show those 4 file extensions -->
+                    <input class="form-control" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true"
+                           data-bs-title="Image of aspect ratio 1:1 is recommended, will be resized to 1024x1024 pixels"
+                           type="file" id="img_file" name="img_file" accept=".jpg, .jpeg, .png, .webp" required>
+                    <div class="invalid-feedback">
+                        pog
+                    </div>
+                </div>
+                <br>
+                <input type="submit" value="Create Product" class="btn btn-success">
+            </form>
+        </div>
+        <div class="col-4">
+
+
+            <img id="image-preview" class="border rounded p-2" width="350"
+                 src="../static/img/donation/image.svg"
+                 alt="image-preview">
+        </div>
+
+
+        {% if error_message or price_error_message or name_error_message %}
+            <br>
+            <div class="alert alert-danger" role="alert">
+                {% if error_message %}
+                    <p class="error-message">{{ error_message }}</p>
+                {% endif %}
+                {% if price_error_message %}
+                    <p class="error-message">{{ price_error_message }}</p>
+                {% endif %}
+                {% if name_error_message %}
+                    <p class="error-message">{{ name_error_message }}</p>
+                {% endif %}
+
+            </div>
+        {% endif %}
+
+
+    </div>
+
+
+    <script nonce="{{ csp_nonce() }}"
+            src="{{ url_for('static', filename='js/donation/donation-admin.js') }}"></script>
+
+{% endblock %}

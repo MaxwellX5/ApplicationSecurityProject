@@ -1,0 +1,11 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+
+{% block modal %}
+
+<h1>Oops</h1>
+<h3>You do not have enough elixir :(</h3>
+<p>You need {{ price }} elixirs to buy this item.</p>
+Click <a class="btn btn-success" href="/mission">here</a> to earn more elixirs.
+
+{% endblock %}

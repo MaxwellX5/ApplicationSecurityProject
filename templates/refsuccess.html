@@ -1,0 +1,16 @@
+{% extends "scan-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+
+{% block modal %}
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/billvalidation.js') }}"></script>
+
+<h1>Success</h1>
+
+<link href="../static/css/donation-base.css" rel="stylesheet">
+
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

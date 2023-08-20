@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/profile.js') }}"></script>
+<link nonce ="{{ csp_nonce() }}" rel="stylesheet" href="{{ url_for('static', filename='css/profile-v3.css') }}">
+
+<div class="container rounded-4 bg-body mt-5 mb-5 shadow-sm">
+
+  <div class="d-flex justify-content-center">
+    <div class="text-left m-5">
+{#    <div class="text-left m-5" style="max-width: 690px;">#}
+
+      <!-- show alert only if got messages, no need for span to show messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          {% if category == 'success' %}
+            <div class="alert alert-success" role="alert">
+              {{ message }}
+            </div>
+          {% elif category == 'danger' %}
+            <div class="alert alert-danger" role="alert">
+              {{ message }}
+            </div>
+          {% elif category == 'warning' %}
+            <div class="alert alert-warning" role="alert">
+              {{ message }}
+            </div>
+          {% else %}
+            <div class="alert alert-info" role="alert">
+              {{ message }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+      {% endwith %}
+
+      <form method="post" action="/profile-v3" enctype="multipart/form-data">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h3>Profile Settings</h3>
+        </div>
+
+        <!-- csrf token -->
+        {{ form.hidden_tag() }}
+
+        <!-- row for profile picture -->
+        <div class="row">
+          <center>
+
+            <!-- profile pic display -->
+            <img id="image-preview" class="rounded-circle border" width="200px" height="200px" src="{{ profile_details['image_url'] }}" alt="invalid file"/>
+            <br><br>
+            <h4>{{ profile_details['username'] }}</h4>
+            <h5 class="font-monospace">{{ profile_details['email'] }}</h5>
+
+          </center>
+
+          <!-- image field -->
+          <div class="col-md-12 mt-3">
+            <label class="form-label">Profile Picture</label>
+            <!-- file upload button, tell browser to only show those 4 file extensions -->
+            <input class="form-control w-75" type="file" id="image-file" name="image_file" accept=".jpg, .jpeg, .png, .webp"> <br>
+          </div>
+
+        </div>
+
+
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" name="2FAStatus" id="2FAStatus" {% if profile_details.get("2FA") %}checked{% endif %}>
+          <label class="form-check-label" for="2FAStatus" id="2FALabel">{% if profile_details.get("2FA") %}Disable OTP 2FA{% else %}Enable OTP 2FA{% endif %}</label>
+          <input type="hidden" name="2FAStatus" id="hidden2FAStatus" value="{% if profile_details.get("2FA") %}on{% else %}off{% endif %}">
+        </div>
+
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" name="Face2FAStatus" id="Face2FAStatus" {% if profile_details.get("Face_2FA") %}checked{% endif %}>
+          <label class="form-check-label" for="Face2FAStatus" id="Face2FALabel">{% if profile_details.get("Face_2FA") %}Disable Face 2FA{% else %}Enable Face 2FA{% endif %}</label>
+          <input type="hidden" name="Face2FAStatus" id="hiddenFace2FAStatus" value="{% if profile_details.get("Face_2FA") %}on{% else %}off{% endif %}">
+        </div>
+
+        <script nonce="{{ csp_nonce() }}" src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+        <script nonce="{{ csp_nonce() }}" src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#qrCodeModal">
+          Show 2FA QR Code
+        </button>
+          <button type="button" class="btn btn-primary"><a id="registerface" href="/registerface">Register Face ID</a></button>
+                <!-- Modal -->
+        <div class="modal fade" id="qrCodeModal" tabindex="-1" role="dialog" aria-labelledby="qrCodeModalLabel" aria-hidden="true">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="qrCodeModalLabel">QR Code for 2FA</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+
+                <img src="data:image/png;base64, {{ profile_details.get("qrcodeurl") }}">
+              </div>
+            </div>
+          </div>
+        </div>
+      <p></p>
+        <!-- Email field -->
+           <div class = "col-md-12">
+            <label>Email</label>
+            <div class="input-group has-validation">
+              <input type="email" id="email" name="email" class="form-control bg-body-tertiary" placeholder="Email" required value="{{ profile_details['email'] }}">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+        <!-- split column for first and last name -->
+        <div class="row mt-2">
+
+          <!-- first_name field -->
+          <div class="col-md-6">
+            <label>First Name</label>
+            <div class="input-group has-validation">
+              <input type="text" id="first_name" name="first_name" class="form-control bg-body-tertiary" placeholder="First Name" required value="{{ profile_details['first_name'] }}">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+          </div>
+
+          <!-- last_name field -->
+          <div class="col-md-6">
+            <label>Last Name</label>
+            <div class="input-group has-validation">
+              <input type="text" id="last_name" name="last_name" class="form-control bg-body-tertiary" placeholder="Last Name" required value="{{ profile_details['last_name'] }}">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row">
+
+          <!-- username field -->
+          <div class="col-md-12 mt-3">
+            <label>Username</label>
+            <div class="input-group has-validation">
+              <input type="text" id="username" name="username" class="form-control bg-body-tertiary" placeholder="Username" required value="{{ profile_details['username'] }}">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+          </div>
+
+          <!-- phone_num field -->
+          <div class="col-md-12 mt-3">
+            <label>Phone Number</label>
+            <div class="input-group has-validation">
+              <input type="text" id="phone_number" name="phone_number" class="form-control bg-body-tertiary" placeholder="Phone Number" required value="{{ profile_details['phone_number'] }}">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+          </div>
+
+          <!-- address field -->
+          <div class="col-md-12 mt-3">
+            <label>Address</label>
+            <div class="input-group has-validation">
+              <input type="text" id="address" name="address" class="form-control bg-body-tertiary" placeholder="Address" required value="{{ profile_details['address'] }}">
+{#              <textarea type="text" id="address" name="address" class="form-control bg-body-tertiary" placeholder="Address" required></textarea>#}
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+          </div>
+
+{#          <script>#}
+{#            // use javascript to add value because textareafield is dumbdumb#}
+{#            document.getElementById("address").value = "{{ profile_details['address'] }}";#}
+{#          </script>#}
+
+          <!-- postal_code field -->
+          <div class="col-md-12 mt-3">
+            <label>Postal Code</label>
+            <div class="input-group has-validation">
+              <input type="text" id="postal_code" name="postal_code" class="form-control bg-body-tertiary" placeholder="Postal Code" required value="{{ profile_details['postal_code'] }}">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- submit button -->
+        <div class="mt-5 text-center">
+          <input class="btn btn-primary" type="submit" value="Save Profile">
+        </div>
+
+      </form>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Sign in{% endblock %}
+{% block content %}
+{% from "includes/_formHelper.html" import render_field %}
+<link nonce="{{ csp_nonce() }}" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<link nonce="{{ csp_nonce() }}" rel="stylesheet" href="{{ url_for('static', filename='css/signin.css') }}">
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/signin.js') }}"></script>
+<script nonce="{{ csp_nonce() }}" src='https://www.google.com/recaptcha/api.js?render=6LezYBkmAAAAAHdNAgPTnZ2S2DQ2FobvTO5xILZO'></script>
+
+<div id="Background">
+    <div class="registration-form">
+        <form method="POST" action="" id="login-form">
+            {{ form.hidden_tag() }}
+
+            <h3 class="text-center">Login</h3>
+
+            <div class="form-group">
+                {{ render_field(form.email, class="form-control item", placeholder="Email") }}
+            </div>
+            <div class="form-group">
+                {{ form.password.label(class="form-label") }}
+                <div class="input-group">
+                    {{ form.password(class="form-control item", placeholder="Password") }}
+                    <div class="input-group-append">
+                        <span nonce="{{ csp_nonce() }}" class="input-group-text toggle-password form-control item" id="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </span>
+                    </div>
+                </div>
+{#                <div class="password-errors" style="color: red;">#}
+
+                <div class="password-errors">
+                    {% for error in form.password.errors %}
+                    {{ error }}<br>
+                    {% endfor %}
+                </div>
+            </div>
+
+
+            <div class="form-group">
+                <input type="hidden" id="g-captcha-response" name="g-captcha-response">
+                <input type="submit" class="btn btn-primary btn-block create-account" value="Sign in" id="submit-button">
+            </div>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+            {% for message in messages %}
+                <h5 class="text-center">{{ message }}</h5>
+            {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+        </form>
+    </div>
+</div>
+{% endblock %}

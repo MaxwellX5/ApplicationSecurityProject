@@ -1,0 +1,10 @@
+.text-left m5-15 {
+    margin-left: 5px;
+    margin-right: 15px;
+    max-width: 690px;
+}
+
+#registerface {
+    text-decoration: none;
+    color: #fff;
+}

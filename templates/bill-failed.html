@@ -1,0 +1,46 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+
+<h1>Error</h1>
+{% if data == 'Date' %}
+    <h5>The pdf was not uploaded due to the fact that the bill month period was during {{ userdate }}, however we are only accepting bills during the period of {{ currentaccept }}. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Company' %}
+    <h5>The pdf was not uploaded due to the fact that the PDF was not an Senoko Energy bill PDF, either that or it has been modified. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Duplicate' %}
+    <h5>The pdf was not uploaded due to the fact the same time period was already submitted before. Click <a class="btn btn-primary" href="/submissionhistory">here</a> to view your previous submissions.</h5>
+{% elif data == 'Upload' %}
+    <h5>The pdf was not uploaded due to errors during the upload, try again later. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Unsafe' %}
+    <h5>The pdf was not uploaded due to it being potentially unsafe, check the pdf and submit again or reach for support instead. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Report' %}
+    <h5>Pdf was not uploaded due to it being unable to be checked for whether it is safe or unsafe. Try again later or Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Scan' %}
+    <h5>The pdf was not uploaded due to the scan failing. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Company' %}
+    <h5>The pdf was not uploaded due to the fact that the PDF size was too big. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'RateLimited' %}
+    <h5>The pdf was not uploaded due to the fact that you are being rate limited, please try again in a while. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'Threading' %}
+    <h5>The pdf was not uploaded due to the fact that there is another file being processed at the moment, please try again once the file is finished processing. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'unexpected' %}
+    <h5> There was an error when generating your referral code, please try again later. Click <a class="btn btn-primary" href="/referral">here</a> to return to the referral page.</h5>
+{% elif data == 'Used' %}
+    <h5> The referral code was already used or does not exist. Click <a class="btn btn-primary" href="/referral">here</a> to return to the referral page.</h5>
+{% elif data == 'Sameuser' %}
+    <h5> You can't use your own referral code! Click <a class="btn btn-primary" href="/referral">here</a> to return to the referral page.</h5>
+{% elif data == 'Referred' %}
+    <h5> You have already used a referral code. Click <a class="btn btn-primary" href="/referral">here</a> to return to the referral page.</h5>
+{% elif data == 'VUnexpected' %}
+    <h5> An unexpected error has occured, please report what was done to have caused this error to our email. Thank you!</h5>
+{% elif data == 'Tampered' %}
+    <h5>The file sent has been tampered. Please ensure you are on a secure connection. Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+{% elif data == 'RateLimit' %}
+    <h5> You are being rate limited. Click <a class="btn btn-primary" href="/referral">here</a> to return to the referral page.</h5>
+{% elif data == 'Timeout' %}
+    <h5>The pdf was not uploaded due to the fact that VirusTotal timed out, try again later.Click <a class="btn btn-primary" href="/scan">here</a> to return to the scanning page.</h5>
+
+{% endif %}
+{% endblock %}

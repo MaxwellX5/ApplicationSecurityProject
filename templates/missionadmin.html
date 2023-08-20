@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% block content %}
+    {% from "includes/_formHelper.html" import render_field %}
+    <html lang="en">
+    <body>
+    <section>
+        <div id="main-banner-div">
+            <h1>Add a product</h1>
+            <form action="/mission-form" method="POST">
+                {{ create_mission_form.hidden_tag() }}
+                {{ render_field(create_mission_form.mission_name, class= "form-control") }}
+                {{ render_field(create_mission_form.mission_requirement, class= "form-control") }}
+                {{ render_field(create_mission_form.mission_reward, class= "form-control") }}
+                <input type="datetime-local" class="form-control" name="mission_time" value="{{ create_mission_form.mission_time.data|default('') }}">
+
+                <button type="submit" class="btn btn-success" id="add-button">Add</button>
+            </form>
+        </div>
+    </section>
+
+    </body>
+    </html>
+{% endblock %}
+```

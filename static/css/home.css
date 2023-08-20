@@ -1,0 +1,9 @@
+#main-banner-section {
+    background: url("../img/home-background.png") no-repeat;
+    background-size: cover;
+    height: 100vh;
+    min-height: 1300px;
+    width: 100%;
+    background-position: 50% 50%;
+    display: flex;
+}

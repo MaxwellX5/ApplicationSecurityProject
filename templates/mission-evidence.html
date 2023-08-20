@@ -1,0 +1,37 @@
+<link href="../static/css/mission-base.css" rel="stylesheet">
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+    <h1>Add Mission Evidence</h1>
+    <!-- show alert only if got messages, no need for span to show messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                {% if category == 'success' %}
+                    <div class="alert alert-success" role="alert">
+                        {{ message }}
+                    </div>
+                {% elif category == 'danger' %}
+                    <div class="alert alert-danger" role="alert">
+                        {{ message }}
+                    </div>
+                {% elif category == 'warning' %}
+                    <div class="alert alert-warning" role="alert">
+                        {{ message }}
+                    </div>
+                {% else %}
+                    <div class="alert alert-info" role="alert">
+                        {{ message }}
+                    </div>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+    <form action="{{ url_for('mission_evidence', missionid=missionid) }}" method="post" enctype="multipart/form-data">
+        {{ form.csrf_token }}
+        {{ form.mission_evidence.label }} {{ form.mission_evidence }}
+        {{ form.submit(class="btn btn-success") }}
+    </form>
+{% endblock %}

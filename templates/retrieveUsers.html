@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+{% block title %}ElectroWizard = Retrieve Users{% endblock %}
+
+{% block content %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/retrievecards.css') }}">
+<link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+<style>
+.nostretch {
+  max-width: 100%;
+
+}
+
+
+</style>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="nostretch">
+<table class="table table-striped">
+  <thead>
+  <tr>
+    <th>Username</th>
+    <th>Email</th>
+    <th>Phone Number</th>
+    <th>Lock Status</th>
+  </tr>
+  </thead>
+  <tbody>
+  {% for user in data %}
+  <tr>
+    <td>{{ user.get("username") }}</td>
+    <td>{{ user.get("email") }}</td>
+    <td>{{ user.get("phone_num") }}</td>
+    <td>{{ user.get("lock") }}</td>
+<td>
+  <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#lockModal_{{ user.get('email') }}">
+    {% if user.get('lock') %}
+      Unban
+    {% else %}
+      Ban
+    {% endif %}
+  </button>
+
+  <div class="modal" id="lockModal_{{ user.get('email') }}">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h4 class="modal-title">
+            {% if user.get('lock') %}
+              Unban Confirmation
+            {% else %}
+              Ban Confirmation
+            {% endif %}
+          </h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          {% if user.get('lock') %}
+            Are you sure you want to unban {{ user.get('username') }}?
+          {% else %}
+            Are you sure you want to ban {{ user.get('username') }}?
+          {% endif %}
+
+          <form id="lockForm_{{ user.get('email') }}" action="{% if user.get('lock') %}{{ url_for('unlockuser', email=user.get('email')) }}{% else %}{{ url_for('lockuser', email=user.get('email')) }}{% endif %}" method="POST">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+            {% if user.get('lock') %}
+              <button type="submit" class="btn btn-success">Unban</button>
+            {% else %}
+              <button type="submit" class="btn btn-danger">Ban</button>
+            {% endif %}
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</td>
+<td>
+  <form action="{{ url_for('deleteuser', email=user.get('email')) }}" method="POST">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal_{{ user.get('email') }}">
+      Delete
+    </button>
+    <div class="modal" id="deleteModal_{{ user.get('email') }}">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title">Delete Confirmation</h4>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            Are you sure you want to delete {{ user.get('username') }}?
+          </div>
+          <div class="modal-footer">
+            <input type="submit" value="Delete" class="btn btn-danger">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</td>
+
+
+</tr>
+{% endfor %}
+</tbody>
+</table>
+</div>
+</body>
+{% endblock %}

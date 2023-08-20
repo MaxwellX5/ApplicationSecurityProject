@@ -1,0 +1,21 @@
+{% extends "submission-base.html" %}
+{% block title %}Electro Wizard - Scan{% endblock %}
+<link href="../static/css/donation-base.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+{% block modal %}
+  <h1>Referral</h1>
+  <p>Enter in a referral code or generate a referral code. Your referral code is {{ refcode }}</p>
+<form method="post" action="/referral" id='forms' enctype="multipart/form-data" >
+  {{ form.hidden_tag() }}
+  <input type="text" name="img_file" id="img_file" required>
+
+  <input class="btn btn-primary" type="submit" id='submits'value="Submit">
+</form>
+
+{% endblock %}
+{% block content %}
+
+
+
+{% endblock %}

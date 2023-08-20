@@ -1,0 +1,12 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+
+{% block modal %}
+
+<h1>Success</h1>
+<h3>Thanks {{ donation_username }}, for fighting climate change!</h3>
+<p>You have gained {{ donation_points }} points.</p>
+<p>Your comment is: <span class="font-monospace">{{ donation_comment }}</span></p>
+Click <a class="btn btn-success" href="/donation-leaderboard">here</a> to check the leaderboard.
+
+{% endblock %}

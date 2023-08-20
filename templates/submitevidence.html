@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% block content %}
+    {% from "includes/_formHelper.html" import render_field %}
+    <html lang="en">
+    <body data-bs-theme="dark">
+    <section>
+        <div id="main-banner-div">
+            <h1>Add a mission</h1>
+            <form action="{{ url_for('mission_evidence', mission_id=mission_id) }}" method="POST">
+                {{ user_mission_evidence_form.hidden_tag() }}
+                 {{ render_field(user_mission_evidence_form.user_mission_evidence, class="form-control") }}
+                 <button type="submit" class="btn btn-success" id="add-button">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    </body>
+    </html>
+{% endblock %}
+```

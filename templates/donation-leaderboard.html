@@ -1,0 +1,154 @@
+<link href="../static/css/donation-leaderboard.css" rel="stylesheet">
+
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+
+<h1>Donation Leaderboard</h1>
+
+<!-- if user is logged in, donation_login == true -->
+{% if donation_details['login'] %}
+<!-- show profile and stuff -->
+<ul class="nav nav-underline" id="profile-tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#meter-tab" type="button" role="tab"
+      aria-selected="true">Meter</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rewards-tab" type="button" role="tab"
+      aria-selected="false">Rewards</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="profile-tabs-content"> <br>
+  <div class="tab-pane fade show active" id="meter-tab" role="tabpanel" tabindex="0">
+
+    <h4>Level <span id="donation-level">{{ donation_details['level'] }}</span></h4>
+
+    <!-- progress bar green -->
+    <div class="progress" role="progressbar">
+      <div class="progress-bar progress-bar-striped progress-bar-animated bg-success" 
+          data-progress="{{ donation_details['progress'] }}" 
+          id="donation-progress-bar">
+        <strong id="donation-progress-percentage">{{ donation_details['progress'] }}%</strong>
+      </div>
+    </div> <br>
+
+
+    <!-- show points here -->
+    <h6>You have {{ donation_details['points'] }} points!</h6>
+
+    <h5>Join our cause and get a spot on the leaderboard!</h5>
+    <a class="btn btn-primary" href="/donation-form">Donate</a>
+
+  </div>
+
+  <div class="tab-pane fade show" id="rewards-tab" role="tabpanel" tabindex="0">
+    {% if donation_details['level'] > 0 %}
+    <div class="container d-flex align-items-center bg-body rounded-4">
+      <button id="scroll-left" class="btn bg-body-subtle border border-secondary rounded">
+        <i class="bi bi-chevron-left"></i>
+      </button>
+      <div class="d-flex overflow-auto rounded-4" id="rewards-cards">
+
+        {% for donation_db_rewards_doc in donation_db_rewards_list %}
+        <!-- reward cards -->
+        <div class="col card-group m-3">
+          <div class="card card-cover overflow-hidden text-bg-dark rounded-4 d-flex flex-column custom-bg"
+            data-bg="{{ donation_db_rewards_doc.image_url }}">
+            <div class="m-3 flex-grow-1">
+              <h1 class="fw-bold">Level {{ donation_db_rewards_doc.level }}</h1>
+              <h5 class="">{{ donation_db_rewards_doc.name }}</h5>
+            </div>
+            <div class="m-3">
+              <a tabindex="0" class="btn btn-success" role="button" data-bs-toggle="popover" data-bs-trigger="focus"
+                data-bs-placement="bottom" data-bs-title="{{ donation_db_rewards_doc.name }}"
+                data-bs-content="{{ donation_db_rewards_doc.description }}">More</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+
+      </div>
+      <button id="scroll-right" class="btn bg-body-tertiary border border-secondary rounded">
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      {% else %}
+      <h4>You do not have any rewards :(</h4>
+      <h4>Click <a class="btn btn-primary" href="{{ url_for('donation_form') }}">here</a> to donate!</h4>
+
+
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<!-- if user is not logged in, donation_login == false -->
+{% else %}
+<!-- dont show profile, just warn -->
+<h5>Log in to check your profile.</h5>
+<p>Click <a href="/login">here</a> to login.</p>
+{% endif %}
+
+
+{% endblock %}
+
+{% block content %}
+
+<section class="bg-body rounded-4 p-4 shadow-sm">
+  <ul class="nav nav-underline" id="leaderboard-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#most-recent-tab" type="button" role="tab"
+        aria-selected="true">Most Recent</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#most-donated-tab" type="button" role="tab"
+        aria-selected="false">Most Donated</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="leaderboard-tabs-content">
+    <div class="tab-pane fade show active" id="most-recent-tab" role="tabpanel" tabindex="0">
+      <table class="table table-striped align-middle">
+        <tr>
+          <th>Username</th>
+          <th>Points</th>
+          <th>Comment</th>
+          <th>Date</th>
+        </tr>
+        {% for donation_db_doc in donation_db_list %}
+        <tr>
+          <td><img class="rounded-circle border" src="{{ donation_db_doc['image_url'] }}" width="50px" height="50px">
+            {{ donation_db_doc.username }}</td>
+          <td>{{ donation_db_doc.points }}</td>
+          <td class="text-break">{{ donation_db_doc.comment }}</td>
+          <td>{{ donation_db_doc.timestamp_formatted }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+    <div class="tab-pane fade" id="most-donated-tab" role="tabpanel" tabindex="0">
+      <table class="table table-striped align-middle">
+        <tr>
+          <th>Username</th>
+          <th>Total Donated</th>
+          <th>Points</th>
+        </tr>
+        {% for donation_db_users_doc in donation_db_users_list|sort(attribute='points', reverse=true) %}
+        <tr>
+          <td><img class="rounded-circle border" src="{{ donation_db_users_doc['image_url'] }}" width="50px"
+              height="50px"> {{ loop.index }}. {{ donation_db_users_doc.username }}</td>
+          <td>${{ donation_db_users_doc.amount }}</td>
+          <td>{{ donation_db_users_doc.points }}</td>
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </div>
+</section>
+
+<script nonce="{{ csp_nonce() }}"
+  src="{{ url_for('static', filename='js/donation/donation-leaderboard.js') }}"></script>
+{% endblock %}

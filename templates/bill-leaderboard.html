@@ -1,0 +1,44 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+
+{% block modal %}
+
+    <div class="p-4 bg-dark-subtle rounded-4">
+      <div class="container p-3 my-3 bg-dark text-white">
+  <h1 id="mains">Current Leaderboard for the months of {{ date }}</h1>
+  <p></p>
+</div>
+    </div>
+
+
+
+
+<section class="bg-body rounded-4 p-4 shadow-sm">
+        <table class="table table-striped align-middle">
+          <tr>
+            <th>Rank</th>
+            <th>Username</th>
+            <th>Electricity Usage</th>
+          </tr>
+          {% for item in documents %}
+            <tr>
+              <td><img class="rounded-circle border" src="../static/img/donation/mfw.webp" width="50px" height="50px">{{ item.get('Rank') }} </td>
+              <td>{{ item.get('Username') }}</td>
+              <td class="text-break">{{ item.get('Consumption') }}Kwh</td>
+            </tr>
+          {% endfor %}
+        </table>
+
+
+
+          </tr>
+      </table>
+</section>
+
+
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

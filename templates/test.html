@@ -1,0 +1,79 @@
+<div class="modal fade" id="modal-update-{{ donation_db_users_doc.user_id }}" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content bg-body-tertiary">
+      <form action="/donation-form" method="POST">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Update User</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+
+          {{ donation_form.hidden_tag() }}
+
+          <!-- user_id field -->
+          <label>User ID</label>
+          <div class="input-group has-validation">
+            <input type="text" id="user-id" name="user-id" class="form-control" disabled value="{{ donation_db_users_doc.user_id }}">
+            <div class="invalid-feedback">
+              pog
+            </div>
+          </div>
+
+          <!-- username field -->
+          <label>Username</label>
+          <div class="input-group has-validation">
+            <input type="text" id="username" name="username" class="form-control" disabled value="{{ donation_db_users_doc.username }}">
+            <div class="invalid-feedback">
+              pog
+            </div>
+          </div>
+
+          <!-- auto update points? field -->
+          <label>Points</label><br>
+          <input id="points-update-system" name="points-update" type="radio" class="form-check-input" checked required>
+          <label class="form-check-label" for="debit">Let the system update</label>
+
+          <input id="points-update-manual" name="points-update" type="radio" class="form-check-input" required>
+          <label class="form-check-label" for="debit">Manually update</label>
+
+          <!-- points field -->
+          <label>Points</label>
+          <div class="input-group has-validation">
+            <input type="number" id="points" name="points" class="form-control" value="{{ donation_db_users_doc.points }}">
+            <div class="invalid-feedback">
+              pog
+            </div>
+          </div>
+
+          <script>
+            // Get the radio buttons and the points input field
+            var systemUpdateRadio = document.getElementById('points-update-system');
+            var manualUpdateRadio = document.getElementById('points-update-manual');
+            var pointsInput = document.getElementById('points');
+          
+            // Function to enable or disable the points input field
+            var updatePointsInput = function() {
+              console.log("pog")
+              if (systemUpdateRadio.checked) {
+                pointsInput.disabled = true;
+              } else if (manualUpdateRadio.checked) {
+                pointsInput.disabled = false;
+              }
+            }
+          
+            // Listen for changes to the radio buttons
+            systemUpdateRadio.addEventListener('change', updatePointsInput);
+            manualUpdateRadio.addEventListener('change', updatePointsInput);
+          
+            // Call the function once to set the initial state of the points input field
+            updatePointsInput();
+          </script>
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-warning" id="checkout-button">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

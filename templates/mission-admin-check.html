@@ -1,0 +1,73 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+    <h1>Mission Check</h1>
+{% endblock %}
+
+{% block content %}
+
+    <section class="bg-body rounded-4 p-4 shadow-sm">
+        <h1>All the evidence</h1>
+        <p>
+            {% for mission in uncheck_list %}
+                <hr>
+                <div>
+                    <label>id</label>
+                    <h4>{{ mission.mission_user_id }}</h4>
+                    <label>name</label>
+                    <h4>{{ mission.missionname }}</h4>
+                    <label>reward</label>
+                    <h4>{{ mission.missionreward }}</h4>
+                    <label>requirements</label>
+                    <h4>{{ mission.missionrequirement }}</h4>
+
+                    {#                    <a href="/missionapprove/{{ mission.userid }}/{{ mission.missionreward }}/{{ mission.evidence_id }}">#}
+                    {#                        <button type="button" class="btn btn-success">APPROVE</button>#}
+                    {#                    </a>#}
+                    {#                    <a href="/">#}
+                    {#                        <button type="button" class="btn btn-danger">REJECT</button>#}
+                    {#                    </a>#}
+
+                    {#                        <a href="{{ mission.userevidence_url }}">#}
+                    {#                            <button type="button" class="btn btn-warning">VIEW EVIDENCE</button>#}
+                    {#                        </a>#}
+                    {#                        <form id="approveForm_{{ mission.evidence_id }}" action="/missionapprove/" method="post">#}
+                    {#                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">#}
+                    {#                            <input type="hidden" name="userid" value="{{ mission.userid }}">#}
+                    {#                            <input type="hidden" name="reward" value="{{ mission.missionreward }}">#}
+                    {#                            <input type="hidden" name="evidenceid" value="{{ mission.evidence_id }}">#}
+                    {#                            <button type="submit" class="btn btn-success">APPROVE</button>#}
+                    {#                        </form>#}
+                    {#                        <form id="rejectForm_{{ mission.evidence_id }}" action="/missionreject/" method="post">#}
+                    {#                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">#}
+                    {#                            <input type="hidden" name="evidenceid" value="{{ mission.evidence_id }}">#}
+                    {#                            <button type="submit" class="btn btn-danger">REJECT</button>#}
+                    {#                        </form>#}
+                    <div class="row">
+                        <div class="col">
+                            <a href="{{ mission.url }}">
+                                <button type="button" class="btn btn-warning btn-block">VIEW EVIDENCE</button>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href='/missionapprove/{{ mission.mission_user_id }}'>
+                                <button type="submit" class="btn btn-success btn-block">APPROVE</button>
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href='/mission_reject_form/{{ mission.mission_user_id }}'>
+                                <button type="submit" class="btn btn-danger btn-block">REJECT</button>
+                            </a>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+                <hr>
+            {% endfor %}
+        </p>
+    </section>
+
+{% endblock %}

@@ -1,0 +1,568 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+
+<span class="h1">Donation Admin</span>
+
+<!-- show alert only if got messages, no need for span to show messages -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+{% if category == 'success' %}
+<div class="alert alert-success" role="alert">
+  {{ message }}
+</div>
+{% elif category == 'danger' %}
+<div class="alert alert-danger" role="alert">
+  {{ message }}
+</div>
+{% elif category == 'warning' %}
+<div class="alert alert-warning" role="alert">
+  {{ message }}
+</div>
+{% else %}
+<div class="alert alert-info" role="alert">
+  {{ message }}
+</div>
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<!-- modal tab links -->
+<ul class="nav nav-underline" id="admin-form-tabs" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#donation-rewards-tab" type="button" role="tab"
+      aria-selected="true">Rewards</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#donation-profanities-tab" type="button" role="tab"
+      aria-selected="false">Profanity Filters</button>
+  </li>
+</ul>
+
+<div class="tab-content" id="admin-form-tabs-content"> <br>
+  <!-- rewards tab -->
+  <div class="tab-pane fade show active" id="donation-rewards-tab" role="tabpanel" tabindex="0">
+    <h4>Add rewards</h4>
+    <form method="post" action="/donation-admin" enctype="multipart/form-data">
+      <div class="row">
+        <div class="col-9 d-flex align-items-start flex-column">
+          <div class="mb-auto w-100">
+          
+            {{ donation_form.hidden_tag() }}
+
+            <!-- level field -->
+            <label>Level</label>
+            <div class="input-group has-validation">
+              <input type="number" id="level" name="level" class="form-control" placeholder="Level">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+
+            <!-- name field -->
+            <label>Name</label>
+            <div class="input-group has-validation">
+              <input type="text" id="name" name="name" class="form-control"placeholder="Name">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+
+            <!-- description field -->
+            <label>Description</label>
+            <div class="input-group has-validation">
+              <textarea type="text" id="description" name="description" class="form-control" placeholder="Give your reward a description"></textarea>
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+
+            <!-- image field -->
+            <label>Image</label>
+            <div class="input-group has-validation">
+              <!-- file upload button, tell browser to only show those 4 file extensions -->
+              <input class="form-control" data-bs-toggle="tooltip" data-bs-placement="bottom" data-bs-html="true" data-bs-title="Image of aspect ratio 1:1 is recommended, will be resized to 1024x1024 pixels" type="file" id="img_file" name="img_file" accept=".jpg, .jpeg, .png, .webp">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+            <br>
+            <input class="btn btn-success mb-auto" type="submit" value="Submit" data-bs-toggle="modal" data-bs-target="#modal-spinner">
+
+          </div>
+        </div>
+        <div class="col-3 d-flex align-items-start flex-column">
+
+          <!-- goofy image preview ahhhhhhhhh -->
+          <label class="form-label m-0">Image Preview</label>
+          <img id="image-preview" class="border rounded w-100 p-2" src="../static/img/donation/image.svg" alt="image-preview">
+
+        </div>
+
+      </div>
+    </form>
+  </div>
+
+  <!-- profanity filters tab -->
+  <div class="tab-pane fade" id="donation-profanities-tab" role="tabpanel" tabindex="0">
+
+    <h4>Add disallowed or filtered words</h4>
+    <h5>These are words additional to the default filter list.</h5>
+
+    <form action="/donation-admin-profanities" method="POST">
+
+      {{ donation_form.hidden_tag() }}
+
+      <!-- profanity field -->
+      <label>Profanity</label>
+      <div class="input-group has-validation">
+        <textarea id="profanity" name="profanity" class="form-control" required
+          placeholder="For multiple inputs, separate words with a comma, e.g: fuck, shit"></textarea>
+        <div class="invalid-feedback">
+          pog
+        </div>
+      </div> <br>
+
+      <button type="submit" class="btn btn-success">Add</button>
+    </form>
+
+  </div>
+</div>
+
+{% endblock %}
+
+{% block content %}
+
+<section class="bg-body rounded-4 p-4 shadow-sm">
+  <ul class="nav nav-underline" id="leaderboard-tabs" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#donation-tab" type="button" role="tab" aria-selected="true">Donations</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#users-tab" type="button" role="tab" aria-selected="false">Users</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#rewards-tab" type="button" role="tab" aria-selected="false">Rewards</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profanities-tab" type="button" role="tab" aria-selected="false">Profanity Filters</button>
+    </li>
+  </ul>
+  <div class="tab-content" id="leaderboard-tabs-content">
+
+    <!-- tab for donations -->
+    <div class="tab-pane fade show active" id="donation-tab" role="tabpanel" tabindex="0">
+      <br><h3>Donation Manager</h3>
+      <table class="table table-striped align-middle">
+        <tr><th>Donation ID</th><th>User ID</th><th>Username</th><th>Amount</th><th>Points</th><th>Comment</th><th>Date</th><th></th></tr>
+        {% for donation_db_doc in donation_db_list %}
+          <tr>
+            <td><span type="button" class="font-monospace text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="<span class='font-monospace'>{{ donation_db_doc.donation_id }}</span>">{{ donation_db_doc.donation_id[0:8] }}...</span></td>
+            {% if donation_db_doc.user_id == 'Anonymous' %}
+            <td>{{ donation_db_doc.user_id }}</td>
+            {% else %}
+            <td><span type="button" class="font-monospace text-decoration-underline" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-html="true" data-bs-title="<span class='font-monospace'>{{ donation_db_doc.user_id }}</span>">{{ donation_db_doc.user_id[0:9] }}...</span></td>
+            {% endif %}
+            <td>{{ donation_db_doc.username }}</td>
+            <td class="font-monospace">{{ donation_db_doc.amount }}</td>
+            <td class="font-monospace">{{ donation_db_doc.points }}</td>
+            <td class="text-break">{{ donation_db_doc.comment }}</td>
+            <td>{{ donation_db_doc.timestamp_formatted }}</td>
+            <td>
+              <div class="d-flex flex-row">
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal-update-{{ donation_db_doc.donation_id }}"><i class="bi bi-pencil"></i></button> &nbsp
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ donation_db_doc.donation_id }}"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- update modal -->
+          <div class="modal fade" id="modal-update-{{ donation_db_doc.donation_id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-body-tertiary">
+                <form action="/donation-admin-update/{{ donation_db_doc.donation_id }}" method="POST" id="donation-admin-update-form">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Donation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+
+                    {{ donation_form.hidden_tag() }}
+
+                    <!-- donation_id field -->
+                    <label>Donation ID</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="disabled" name="donation-id" class="form-control font-monospace" disabled value="{{ donation_db_doc.donation_id }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- user_id field -->
+                    <label>User ID</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="disabled" name="user-id" class="form-control font-monospace" disabled value="{{ donation_db_doc.user_id }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- username field -->
+                    <label>Username</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="username" name="username" class="form-control" disabled value="{{ donation_db_doc.username }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- amount field -->
+                    <label>Amount</label>
+                    <div class="input-group has-validation">
+                      <span class="input-group-text">SGD</span>
+                      <input type="number" id="amount" name="amount" class="form-control font-monospace" required step="0.01" min="1.00" max="200000.00" placeholder="Between $1 and $200,000" value="{{ donation_db_doc.amount }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- points field -->
+                    <label>Points *will be updated accordingly</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="points" name="points" class="form-control font-monospace" disabled value="{{ donation_db_doc.points }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- comment field -->
+                    <label>Comment</label>
+                    <div class="input-group has-validation">
+                      <textarea type="text" id="comment-{{ donation_db_doc.donation_id }}" name="comment" class="form-control" placeholder="Comment" data-comment="{{ donation_db_doc.comment }}"></textarea>
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- timestamp field -->
+                    <input class="form-check-input" type="checkbox" id="timestamp-update" name="timestamp-update">
+                    <label class="form-check-label" for="timestamp-update">Update timestamp?</label>
+                    
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning" id="checkout-button">Update</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- delete confirmation modal -->
+          <div class="modal fade" id="modal-delete-{{ donation_db_doc.donation_id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-body-tertiary">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete: {{ donation_db_doc.donation_id }}?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-danger" href="{{ url_for('donation_admin_delete', donation_id=donation_db_doc.donation_id)}}">Yes</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {% endfor %}
+      </table>
+    </div>
+
+    <!-- tab for users -->
+    <div class="tab-pane fade" id="users-tab" role="tabpanel" tabindex="0">
+      <br><h3>User Manager</h3>
+      <table class="table table-striped align-middle">
+        <tr><th>Username</th><th>User ID</th><th>Points</th><th></th><th></th></tr>
+        {% for donation_db_users_doc in donation_db_users_list|sort(attribute='points', reverse=true) %}
+          <tr>
+            <td><img class="rounded-circle border" src="{{ donation_db_users_doc.image_url }}" width="50px" height="50px"> {{ donation_db_users_doc.username }}</td>
+            <td class="font-monospace">{{ donation_db_users_doc.user_id }}</td>
+            <td class="font-monospace">{{ donation_db_users_doc.points }}</td>
+            <td>
+              <div class="d-flex flex-row">
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal-update-{{ donation_db_users_doc.user_id }}"><i class="bi bi-pencil"></i></button> &nbsp
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ donation_db_users_doc.user_id }}"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- update modal -->
+          <div class="modal fade" id="modal-update-{{ donation_db_users_doc.user_id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-body-tertiary">
+                <form action="/donation-admin-update-users/{{ donation_db_users_doc.user_id }}" method="POST">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update User</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+
+                    <center>
+                      <img class="rounded-circle border" src="{{ donation_db_users_doc.image_url }}" width="150px" height="150px">
+                      <h2 class="fw-bold">{{ donation_db_users_doc.username }}</h2>
+                      <p><a class="btn btn-secondary" href="{{ url_for('profile_v3') }}">Visit profile</a></p>
+                    </center>
+
+                    {{ donation_form.hidden_tag() }}
+
+                    <!-- user_id field -->
+                    <label>User ID</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="user-id" name="user-id" class="form-control" disabled value="{{ donation_db_users_doc.user_id }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- username field -->
+                    <label>Username</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="username" name="username" class="form-control" disabled value="{{ donation_db_users_doc.username }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- auto update points? field -->
+                    <label>Points</label><br>
+                    <input id="points-update-system-{{ donation_db_users_doc.user_id }}" name="points-update-{{ donation_db_users_doc.user_id }}" value="True" type="radio" class="form-check-input" data-toggle-field="points-{{ donation_db_users_doc.user_id }}" checked required>
+                    <label class="form-check-label" for="debit">Let the system update</label>
+                    <br>
+                    <input id="points-update-manual-{{ donation_db_users_doc.user_id }}" name="points-update-{{ donation_db_users_doc.user_id }}" value="False" type="radio" class="form-check-input" data-toggle-field="points-{{ donation_db_users_doc.user_id }}" required>
+                    <label class="form-check-label" for="debit">Manually update</label>
+
+                    <!-- points field -->
+                    <label>Points</label>
+                    <div class="input-group has-validation">
+                      <input type="number" id="points-{{ donation_db_users_doc.user_id }}" name="points-{{ donation_db_users_doc.user_id }}" class="form-control" placeholder="Points" value="{{ donation_db_users_doc.points }}" min="0" step="0.01" disabled>
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="submit" class="btn btn-warning" id="checkout-button">Update</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- delete confirmation modal -->
+          <div class="modal fade" id="modal-delete-{{ donation_db_users_doc.user_id }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-body-tertiary">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete: {{ donation_db_users_doc.user_id }}?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-danger" href="{{ url_for('donation_admin_delete_users', user_id=donation_db_users_doc.user_id)}}">Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        {% endfor %}
+      </table>
+    </div>
+
+    <!-- tab for rewards -->
+    <div class="tab-pane fade" id="rewards-tab" role="tabpanel" tabindex="0">
+      <br><h3>Rewards Manager</h3>
+      <table class="table table-striped align-middle">
+        <tr><th>Level</th><th>Name</th><th>Description</th><th>Image</th><th></th><th></th></tr>
+        {% for donation_db_rewards_doc in donation_db_rewards_list %}
+          <tr>
+            <td>{{ donation_db_rewards_doc.level }}</td>
+            <td class="text-break">{{ donation_db_rewards_doc.name }}</td>
+            <td>{{ donation_db_rewards_doc.description }}</td>
+            <td><img width="150px" class="card" src="{{ donation_db_rewards_doc.image_url }}" alt="invalid image"></td>
+            <td>
+              <div class="d-flex flex-row">
+                <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modal-update-{{ donation_db_rewards_doc.level }}"><i class="bi bi-pencil"></i></button> &nbsp
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ donation_db_rewards_doc.level }}"><i class="bi bi-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- update modal -->
+          <div class="modal fade" id="modal-update-{{ donation_db_rewards_doc.level }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-body-tertiary">
+                <form method="post" action="/donation-admin-update-rewards/{{ donation_db_rewards_doc.level }}" enctype="multipart/form-data">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Reward</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+
+                    {{ donation_form.hidden_tag() }}
+
+                    <!-- reward level field -->
+                    <label>Level</label>
+                    <div class="input-group has-validation">
+                      <input type="number" id="level" name="level" class="form-control" disabled placeholder="Level" value="{{ donation_db_rewards_doc.level }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- name field -->
+                    <label>Name</label>
+                    <div class="input-group has-validation">
+                      <input type="text" id="name" name="name" class="form-control" required placeholder="Name" value="{{ donation_db_rewards_doc.name }}">
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- decsription field -->
+                    <label>Description</label>
+                    <div class="input-group has-validation">
+                      <textarea type="text" id="rewards-description-{{ donation_db_rewards_doc.level }}" name="description" class="form-control" required placeholder="Description" data-comment="{{ donation_db_rewards_doc.description }}"></textarea>
+                      <div class="invalid-feedback">
+                        pog
+                      </div>
+                    </div>
+
+                    <!-- image field -->
+                    <label class="form-label">New Image</label>
+                    <!-- file upload button, tell browser to only show those 4 file extensions -->
+                    <input class="form-control" type="file" id="img_file-{{ donation_db_rewards_doc.level }}" name="img_file" accept=".jpg, .jpeg, .png, .webp"> <br>
+                    
+                    <!-- image preview -->
+                    <label class="form-label">Image Preview</label>
+                    <center>
+                      <img id="image-preview-{{ donation_db_rewards_doc.level }}" class="card p-3" width="100%" height="90%" src="{{ donation_db_rewards_doc.image_url }}"/>
+                    </center>
+
+                  </div>
+                  <div class="modal-footer">
+                    <input class="btn btn-warning" type="submit" value="Update" data-bs-toggle="modal" data-bs-target="#modal-spinner">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- delete confirmation modal -->
+          <div class="modal fade" id="modal-delete-{{ donation_db_rewards_doc.level }}" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content bg-body-tertiary">
+                <div class="modal-header">
+                  <h1 class="modal-title fs-5" id="exampleModalLabel">Delete Confirmation</h1>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                  Are you sure you want to delete: Rewards level {{ donation_db_rewards_doc.level }}?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                  <a class="btn btn-danger" href="{{ url_for('donation_admin_delete_rewards', level=donation_db_rewards_doc.level)}}">Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {% endfor %}
+      </table>
+    </div>
+
+    <!-- tab for profanity filters -->
+    <div class="tab-pane fade" id="profanities-tab" role="tabpanel" tabindex="0">
+      <br><h3>Profanity Filters Manager</h3>
+      <p class="fw-bold border rounded p-2">Purge existing comments using applied filters: &nbsp <a href="/donation-admin-profanities-purge" class="btn btn-outline-primary">Run</a></p>
+      Filters applied: {{ donation_profanities_statistics['applied_count'] }}<br>
+      Total filters: {{ donation_profanities_statistics['total_count'] }}<br><br>
+      <form method="post" action="/donation-admin-update-profanities" enctype="multipart/form-data">
+        {{ donation_form.hidden_tag() }}
+        <table class="table table-striped align-middle">
+          <input class="btn btn-success profanities-submit" type="submit" value="Save" disabled> <br><br>
+          <tr><th>Applied</th><th>Filter</th><th></th></tr>
+          {% for donation_db_profanities_doc in donation_db_profanities_list %}
+            <tr>
+              {% if donation_db_profanities_doc.enabled == True %}
+                <td>
+                  <input class="form-check-input profanity-enabled" type="checkbox" id="profanity-enabled" name="{{ donation_db_profanities_doc.profanity }}" checked> <span class="badge bg-success">Enabled</span>
+                </td>
+              {% elif donation_db_profanities_doc.enabled == False %}
+                <td>
+                  <input class="form-check-input profanity-enabled" type="checkbox" id="profanity-enabled" name="{{ donation_db_profanities_doc.profanity }}"> <span class="badge bg-danger">Disabled</span>
+                </td>
+              {% endif %}
+              <td class="font-monospace">{{ donation_db_profanities_doc.profanity }}</td>
+              <td>
+                <div class="d-flex flex-row">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal-delete{{ loop.index }}"><i class="bi bi-trash"></i></button>
+                </div>
+              </td>
+            </tr>
+
+            <!-- delete confirmation modal -->
+            <div class="modal fade" id="modal-delete{{ loop.index }}" tabindex="-1" aria-hidden="true">
+              <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content bg-body-tertiary">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Remove Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <div class="modal-body">
+                    Are you sure you want to delete: "{{ donation_db_profanities_doc.profanity }}"?
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                    <a class="btn btn-danger" href="{{ url_for('donation_admin_delete_profanities', profanity=donation_db_profanities_doc.profanity) }}">Delete</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          {% endfor %}
+        </table>
+        <input class="btn btn-success profanities-submit" type="submit" value="Save" disabled>
+      </form>
+    </div>
+
+    <!-- spinner modal -->
+    <div class="modal fade" id="modal-spinner" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content bg-body-tertiary">
+          <div class="modal-body">
+            <div class="d-flex justify-content-center align-center">
+              <div class="spinner-border" role="status">
+                <span class="visually-hidden">you found an easter egg</span>
+              </div>
+              <h4 class="p-1 m-0">&nbsp Processing image...</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/donation/donation-admin.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}{% endblock %}</title>
+
+  <!-- custom css -->
+  <link href="../static/css/donation-base.css" rel="stylesheet">
+
+  <!-- favicon -->
+  <link rel="shortcut icon" href="../static/img/favicon2.jpeg">
+
+  <!-- popover scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+
+  <!-- bootstrap icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+  <!-- Bootstrap CSS v5.3 -->
+  <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.14.0/css/all.css" integrity="sha384-HzLeBuhoNPvSl5KYnjx0BT+WB0QEEqLprO+NBkkk5gbc67FTaL7XIGa2w1L0Xbgc" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+          crossorigin="anonymous"></script>
+
+</head>
+<body class="bg-body-tertiary">
+
+{% block navbar %}
+    {% if "id" not in session %}
+        {% include 'includes/_navbar.html' %}
+    {% elif "id" in session %}
+        {% if get_user_attribute_unencrypted(session["id"], "role") == "Admin" %}
+            {% include 'includes/_adminnavbar.html' %}
+        {% elif get_user_attribute_unencrypted(session["id"], "role") == "Leaderboard Manager" %}
+            {% include 'includes/_leaderboardnavbar.html' %}
+        {% elif get_user_attribute_unencrypted(session["id"], "role") == "Product_manager" %}
+            {% include 'includes/_productnavbar.html' %}
+        {% elif get_user_attribute_unencrypted(session["id"], "role") == "Mission_manager" %}
+            {% include 'includes/_missionnavbar.html' %}
+        {% elif get_user_attribute_unencrypted(session["id"],"role") == "Regular" %}
+            {% include 'includes/_usernavbar.html' %}
+        {% else %}
+            {% include 'includes/_usernavbar.html' %}
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+  <section id="main-banner-section">
+    <div class="container my-5" id="main-banner-div">
+      <div class="p-4 bg-dark-subtle rounded-4">
+        {% block modal %}
+        {% endblock %}
+      </div>
+    </div>
+  </section>
+
+  <main class="container-xxl mb-5">
+
+
+  {% block content %}
+  {% endblock %}
+  </main>
+
+  {% block footer %}
+  {% include 'includes/_footer.html' %}
+  {% endblock %}
+
+  {% block toggler %}
+  {% include 'includes/_toggler.html' %}
+  {% endblock %}
+
+</body>
+</html>

@@ -1,0 +1,59 @@
+body {
+    background: lightblue !important;
+}
+
+
+
+main {
+    background: lightblue;
+}
+
+.col-md-12 {
+    margin-top: 15px;
+}
+
+.form-control {
+    margin-top: 5px;
+}
+
+.form-control:focus {
+    box-shadow: none !important;
+    border-color: deepskyblue !important;
+}
+
+
+.profile-button {
+    background: deepskyblue !important;
+    box-shadow: none !important;
+    border: none !important;
+}
+
+.profile-button:hover {
+    background: dodgerblue !important;
+}
+
+.profile-button:focus {
+    background: dodgerblue !important;
+    box-shadow: none !important;
+}
+
+.profile-button:active {
+    background: dodgerblue !important;
+    box-shadow: none !important;
+}
+
+.back:hover {
+    color: dodgerblue !important;
+    cursor: pointer !important;
+}
+
+.labels {
+    font-size: 11px !important;
+}
+
+.add-experience:hover {
+    background: dodgerblue !important;
+    /*color: #fff !important;*/
+    cursor: pointer !important;
+    border: solid 1px dodgerblue !important;
+}

@@ -1,0 +1,61 @@
+@font-face {
+    font-family: 'DefaultFont';
+    src: url('../font-face/regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'DefaultFont';
+    src: url('../font-face/bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'DefaultFont';
+    src: url('../font-face/italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+  }
+  
+  @font-face {
+    font-family: 'DefaultFont';
+    src: url('../font-face/light.ttf') format('truetype');
+    font-weight: 300;
+    font-style: normal;
+  }
+  
+  @font-face {
+    font-family: 'DefaultFont';
+    src: url('../font-face/medium.ttf') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+  }  
+
+* {
+  font-family: DefaultFont;
+}
+
+html {
+    color-scheme: dark;
+}
+
+#main-banner-section {
+    background: url("../img/donation/donation-home-page-bg2.png") no-repeat;
+    background-size: cover;
+    height: 1000px;
+    width: 100%;
+    background-position: 50% 50%;
+    display: flex;
+}
+
+#main-banner-div {
+    transform: translateY(25%);
+    height: 500px;
+}
+
+#scroll-button {
+    transform: translateY(-195px);
+    position: relative;
+}

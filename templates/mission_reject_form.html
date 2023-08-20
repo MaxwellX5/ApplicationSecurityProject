@@ -1,0 +1,14 @@
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+    <h1>Reason for rejecting</h1>
+            <form action="/mission_reject_form/{{ mission_user_id }}" method="POST">
+                {{ create_rejection_form.hidden_tag() }}
+                {{ render_field(create_rejection_form.rejection_reason, class= "form-control") }}
+
+                <button type="submit" class="btn btn-success" id="add-button">Add</button>
+            </form>
+{% endblock %}
+

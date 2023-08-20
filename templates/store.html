@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% block content %}
+    {% from "includes/_formHelper.html" import render_field %}
+    <html lang="en">
+    <head>
+        <!-- Required meta tags -->
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- custom css -->
+        <link href="../static/css/store.css" rel="stylesheet">
+        <title>Hello, world!</title>
+        <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,900&display=swap"
+              rel="stylesheet">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/kute.js/2.2.4/kute.min.js"></script>
+    </head>
+    <body>
+    <section class="main">
+        <div class="row py-4">
+            <div class="banner">
+                <div class="col-lg-7 pt-5 text-center">
+                    <h1 class="banner-text">Gift Exchange Shop</h1>
+                    <button class="btn1 mt-3">Put Something Here</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="waves"></section>
+
+    <section class="shop" id="shop">
+
+        <div class="currency">
+            <div class="currency-amt">
+                <p>{{ elixir }} <img class="elixir" src="../static/img/store/elixir.png"> </p>
+            </div>
+        </div>
+
+        <div class="shop-head">
+            <h1>What we offer</h1>
+        </div>
+        <div class="container">
+            {% for product in product_db_list %}
+
+                <div class="box">
+                    <img src="{{ product.url }}">
+                    <h4>{{ product.product_name }}</h4>
+                    <h5>{{ product.product_price }}</h5>
+                    <a href="/redeem/{{ product.product_id }}">
+                        <button type="button" class="product-button">BUY NOW</button>
+                    </a>
+                </div>
+
+            {% endfor %}
+        </div>
+    </section>
+
+    <section class="waves flip"></section>
+    </body>
+    </html>
+{% endblock %}
+```

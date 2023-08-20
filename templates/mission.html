@@ -1,0 +1,87 @@
+<link href="../static/css/mission-base.css" rel="stylesheet">
+{% extends "donation-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block modal %}
+    {#    <script src="{{ url_for('static', filename='js/post.js') }}"></script>#}
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <div class="alert alert-success" role="alert">{{ message }}</div>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    {% endwith %}
+    <h1>Mission</h1>
+
+    <label>Elixir:</label>
+    <h5>{{ elixir }}</h5>
+    <hr>
+
+    {% for mission in approved_list %}
+        <h6>Mission {{ mission.missionname }} has been completed, {{ mission.missionreward }} elixir has been
+            awarded</h6>
+
+    {% endfor %}
+
+    <hr>
+    <h5>Total reward: {{ total_reward }}</h5>
+    <form action="/mission_claim" method="POST">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+        <input type="hidden" name="total_reward" value="{{ total_reward }}">
+        <input type="hidden" name="encrypted_user_id" value="{{ encrypted_user_id }}">
+
+
+        <button type="submit" class="btn btn-success">Claim</button>
+    </form>
+
+
+
+
+
+
+{% endblock %}
+
+{% block content %}
+
+    <section class="bg-body rounded-4 p-4 shadow-sm">
+        <hr>
+        <h2>Mission</h2>
+        {% for mission in mission_db_list %}
+            <label>Name</label>
+            <h4>{{ mission.missionname }}</h4>
+            <label>Reward</label>
+            <h4>{{ mission.missionreward }}</h4>
+            <label>Evidence Required</label>
+            <h4>{{ mission.missionrequirement }}</h4>
+
+
+            <a href="/missionevidence/{{ mission.missionid }}">
+                <button type="button" class="btn btn-success">Submit Evidence</button>
+            </a>
+            <hr>
+        {% endfor %}
+
+        <hr>
+        <h2>Reject Mission</h2>
+        {% for mission in rejected_list %}
+            <label>Name</label>
+            <h4>{{ mission.missionname }}</h4>
+            <label>Reward</label>
+            <h4>{{ mission.missionreward }}</h4>
+            <label>Evidence Required</label>
+            <h4>{{ mission.missionrequirement }}</h4>
+            <label>Reason</label>
+            <h4>{{ mission.rejection_reason }}</h4>
+
+
+            <a href="/missionevidence/{{ mission.missionid }}">
+                <button type="button" class="btn btn-success">Submit Evidence</button>
+            </a>
+        {% endfor %}
+    </section>
+
+{% endblock %}
+```

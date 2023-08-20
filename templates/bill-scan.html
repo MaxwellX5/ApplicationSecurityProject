@@ -1,0 +1,24 @@
+{% extends "scan-base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+
+{% block modal %}
+<script nonce="{{ csp_nonce() }}" src="{{ url_for('static', filename='js/billvalidation.js') }}"></script>
+
+<h1>Scanner</h1>
+<h5>Scan your bills!</h5>
+<form method="post" action="/scan" id='forms' enctype="multipart/form-data" >
+  {{ form.hidden_tag() }}
+  <input type="file" name="img_file" id="img_file" accept="application/pdf" required>
+  <span id="img_file_error"></span><br>
+<input type="hidden" name="hash_value" id="hash_value">
+  <input class="btn btn-primary" type="submit" id='submits'value="Submit">
+</form>
+
+<link href="../static/css/donation-base.css" rel="stylesheet">
+
+
+{% endblock %}
+
+{% block content %}
+
+{% endblock %}

@@ -1,0 +1,113 @@
+<link href="../static/css/home.css" rel="stylesheet">
+
+{% extends "base.html" %}
+{% block title %}Electro Wizard{% endblock %}
+{% from "includes/_formHelper.html" import render_field %}
+
+{% block content %}
+
+<body class="bg-body-tertiary">
+  <section id="main-banner-section" class="w-100">
+    <div class="container mt-5">
+      <div class="container mt-5 col-md-8 mx-auto">
+
+        <div class="text-center">
+          <img src="../static/img/logo-v2.png" width="600px" height="85px">
+          <h1 class="m-5 fw-semibold lh-1 display-5">Upload, earn and win ranks</h1>
+          <p class="lead">Learn about climate change and help us fight it. Track your electricity consumption and cut down on it.</p><br>
+        </div>
+
+        <div class="container">
+          <div class="row g-5">
+
+            <div class="col-lg-6">
+              <div class="bg-body p-4 rounded-4">
+                <h3 class="fw-semibold">Register now</h3>
+                <p class="fs-5">Register and start uploading your electricity bills.</p>
+                <a href="/RegistrationForm" class="btn btn-lg btn-outline-success d-flex align-items-center justify-content-center fw-semibold m-1">Create an account</a>
+                Already have an account? <a href="/login">Log in</a> instead. 
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="bg-body p-4 rounded-4">
+                <h3 class="fw-semibold">Help our cause</h3>
+                <p class="fs-5">Donate and help us fight climate change!</p>
+                <button class=" w-100 btn btn-lg btn-outline-success d-flex align-items-center justify-content-center fw-semibold m-1" data-bs-toggle="modal" data-bs-target="#modal-donate">Donate now</b>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="bg-body p-4 rounded-4">
+                <h3 class="fw-semibold">Earn points</h3>
+                <p class="fs-5">Upload your electricity bills to earn points and win ranks.</p>
+                <a href="/scan" class="btn btn-lg btn-outline-success d-flex align-items-center justify-content-center fw-semibold m-1">Upload</a>
+              </div>
+            </div>
+
+            <div class="col-lg-6">
+              <div class="bg-body p-4 rounded-4">
+                <h3 class="fw-semibold">Redeem rewards</h3>
+                <p class="fs-5">Use your points to redeem attractive rewards!</p>
+                <a href="/store" class="btn btn-lg btn-outline-success d-flex align-items-center justify-content-center fw-semibold m-1">Redeem</a>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- update modal -->
+  <div class="modal fade" id="modal-donate" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content bg-body-tertiary">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Make a donation</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form action="/donation-form" method="POST">
+          <div class="modal-body">
+          <p>If you are not logged in, your donation progress will not be tracked.</p>
+
+            {{ donation_form.hidden_tag() }}
+
+            <!-- amount field -->
+            <label>Amount</label>
+            <div class="input-group has-validation">
+              <span class="input-group-text">SGD</span>
+              <input type="number" id="amount" name="amount" class="form-control" required step="0.01" min="1.00" max="200000.00" placeholder="Between $1 and $200,000">
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+
+            <!-- comment field -->
+            <label>Comment</label>
+            <div class="input-group has-validation">
+              <textarea type="text" id="comment" name="comment" class="form-control" placeholder="Leave a comment!"></textarea>
+              <div class="invalid-feedback">
+                pog
+              </div>
+            </div>
+
+            <!-- anonymous field -->
+            <input class="form-check-input" type="checkbox" id="anonymous" name="anonymous">
+            <label class="form-check-label" for="anonymous">Anonymous</label>
+            
+          </div>
+          <div class="modal-footer">
+            <a href="{{ url_for('donation_form') }}" class="btn btn-warning">Learn more</a>
+            <button type="submit" class="btn btn-success" id="checkout-button">Checkout</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+</body>
+
+{% endblock %}
